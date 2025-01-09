@@ -25,7 +25,7 @@ var db *sql.DB
 
 func init() {
 	// Connect to PostgreSQL
-	connStr := os.Getenv("DB_URL")
+	connStr := os.Getenv("DATABASE_URL")
 	if connStr == "" {
 		connStr = "postgres://user:password@localhost:5432/recipes?sslmode=disable" // Replace with your credentials
 	}
