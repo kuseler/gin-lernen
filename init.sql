@@ -20,3 +20,5 @@ INSERT INTO users VALUES ('Clark', 'Sales');
 
 -- fetch
 -- SELECT * FROM users WHERE username = 'Clark';
+
+

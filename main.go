@@ -67,6 +67,8 @@ func main() {
 	if err := router.Run(":9999"); err != nil {
 		log.Fatalf("Failed to run server on port 9999: %v", err)
 	}
+	router.Static("/static", "./static") // Serves files in the "static" folder
+
 }
 
 // Handlers
