@@ -10,12 +10,13 @@ CREATE TABLE recipes (
     creator varchar(16) references users(username),
     title varchar(32),
     content varchar(4096)
-)
+);
 
 -- insert
-INSERT INTO users VALUES ('Clark', 'Sales');
+
 INSERT INTO users VALUES ('Dave', 'Accounting');
 INSERT INTO users VALUES ('Ava', 'Sales');
+INSERT INTO users VALUES ('Clark', 'Sales');
 
 -- fetch
 -- SELECT * FROM users WHERE username = 'Clark';

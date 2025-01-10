@@ -14,6 +14,17 @@ type User struct {
 	Password string `json:"password"`
 }
 
+type userWithoutPass struct {
+	Username string `json:"username"`
+}
+
+// Method to return User without Password
+func (u User) WithoutPassword() userWithoutPass {
+	return userWithoutPass{
+		Username: u.Username,
+	}
+}
+
 type Recipe struct {
 	ID      int    `json:"id"`
 	Creator string `json:"creator"` // Refers to the `username` in users table
@@ -73,14 +84,14 @@ func getAllUsers(c *gin.Context) {
 		}
 	}(rows)
 
-	var users []User
+	var usersWithoutPass []userWithoutPass
 	for rows.Next() {
 		var user User
 		if err := rows.Scan(&user.Username); err != nil {
 			log.Printf("Error scanning user row: %v", err)
 			continue
 		}
-		users = append(users, user)
+		usersWithoutPass = append(usersWithoutPass, user.WithoutPassword())
 	}
 
 	c.JSON(http.StatusOK, users)
