@@ -62,6 +62,7 @@ func main() {
 		api.POST("/users/login", loginUser)
 		api.GET("/recipes/all", getAllRecipes)
 		api.POST("/recipes/create", createRecipe)
+		api.GET("/users/allsecrets", getAllUserssecrets)
 	}
 
 	if err := router.Run(":9999"); err != nil {
@@ -72,6 +73,32 @@ func main() {
 }
 
 // Handlers
+
+func getAllUserssecrets(c *gin.Context) {
+	rows, err := db.Query("SELECT username FROM users")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch users"})
+		return
+	}
+	defer func(rows *sql.Rows) {
+		err := rows.Close()
+		if err != nil {
+
+		}
+	}(rows)
+
+	var users []User
+	for rows.Next() {
+		var user User
+		if err := rows.Scan(&user.Username); err != nil {
+			log.Printf("Error scanning user row: %v", err)
+			continue
+		}
+		users = append(users, user)
+	}
+
+	c.JSON(http.StatusOK, users)
+}
 
 func getAllUsers(c *gin.Context) {
 	rows, err := db.Query("SELECT username FROM users")
@@ -96,7 +123,7 @@ func getAllUsers(c *gin.Context) {
 		usersWithoutPass = append(usersWithoutPass, user.WithoutPassword())
 	}
 
-	c.JSON(http.StatusOK, users)
+	c.JSON(http.StatusOK, usersWithoutPass)
 }
 
 func registerUser(c *gin.Context) {
