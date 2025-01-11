@@ -19,11 +19,6 @@ type userWithoutPass struct {
 }
 
 // Method to return User without Password
-func (u User) WithoutPassword() userWithoutPass {
-	return userWithoutPass{
-		Username: u.Username,
-	}
-}
 
 type Recipe struct {
 	ID      int    `json:"id"`
@@ -64,18 +59,18 @@ func main() {
 		api.POST("/recipes/create", createRecipe)
 		api.GET("/users/allsecrets", getAllUserssecrets)
 	}
-
+//	router.LoadHTMLFiles("index.html")
+	router.Static("/static", "./static") // Serves files in the "static" folder
 	if err := router.Run(":9999"); err != nil {
 		log.Fatalf("Failed to run server on port 9999: %v", err)
 	}
-	router.Static("/static", "./static") // Serves files in the "static" folder
 
 }
 
 // Handlers
 
 func getAllUserssecrets(c *gin.Context) {
-	rows, err := db.Query("SELECT username FROM users")
+	rows, err := db.Query("SELECT * FROM users")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch users"})
 		return
@@ -90,10 +85,11 @@ func getAllUserssecrets(c *gin.Context) {
 	var users []User
 	for rows.Next() {
 		var user User
-		if err := rows.Scan(&user.Username); err != nil {
+		if err := rows.Scan(&user.Username, &user.Password); err != nil {
 			log.Printf("Error scanning user row: %v", err)
 			continue
 		}
+		log.Printf("added user %v to json", user)
 		users = append(users, user)
 	}
 
@@ -113,17 +109,17 @@ func getAllUsers(c *gin.Context) {
 		}
 	}(rows)
 
-	var usersWithoutPass []userWithoutPass
+	var users []User
 	for rows.Next() {
 		var user User
 		if err := rows.Scan(&user.Username); err != nil {
 			log.Printf("Error scanning user row: %v", err)
 			continue
 		}
-		usersWithoutPass = append(usersWithoutPass, user.WithoutPassword())
+		users= append(users, user)
 	}
 
-	c.JSON(http.StatusOK, usersWithoutPass)
+	c.JSON(http.StatusOK, users)
 }
 
 func registerUser(c *gin.Context) {

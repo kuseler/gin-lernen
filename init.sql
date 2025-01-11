@@ -1,5 +1,5 @@
-CREATE DATABASE epic_recipe_db;
-\c epic_recipe_db;
+-- CREATE DATABASE epic_recipe_db;
+--\c epic_recipe_db;
 CREATE TABLE users (
                        username varchar(16) PRIMARY KEY NOT NULL,
                        password varchar(32)
